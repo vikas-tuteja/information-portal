@@ -1,0 +1,2 @@
+apt-get -y install libsox-fmt-mp3 libsox-fmt-all mpg321 ffmpeg
+
