@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'content',
     'category',
     'homepage',
+    'myaccount',
 ]
 
 MIDDLEWARE = [
