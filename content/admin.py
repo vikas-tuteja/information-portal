@@ -22,11 +22,11 @@ class ModerationAdmin(admin.ModelAdmin):
 
     @staticmethod
     def approve(self):
-        return format_html('<a class="button" href="/api/reviews/{}/approved">Approve</a>'.format(self.id))
+        return format_html('<a class="button" href="/api/content/{}/{}/approved">Approve</a>'.format(self.__class__.__name__, self.id))
 
     @staticmethod
     def reject(self):
-        return format_html('<a class="button" style="background-color:red;" href="/api/reviews/{}/rejected">Reject</a>'.format(self.id))
+        return format_html('<a class="button" style="background-color:red;" href="/api/content/{}/{}/rejected">Reject</a>'.format(self.__class__.__name__, self.id))
 
 
 class ContentAdmin(ModerationAdmin):
@@ -37,12 +37,16 @@ class ContentAdmin(ModerationAdmin):
 
 
 class LibraryAdmin(ModerationAdmin):
+    search_fields = ('name',)
     filter_horizontal = ('sub_category',)
     list_display = ('title', 'created_at', 'views', 'active', 'status', 'approve', 'reject')
     readonly_fields = ('slug', 'views', 'status', 'active')
 
 
+class StatusAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'slug')
+
 admin.site.register(Image, ImageAdmin)
 admin.site.register(Content, ContentAdmin)
 admin.site.register(Library, LibraryAdmin)
-admin.site.register(Status)
+admin.site.register(Status, StatusAdmin)

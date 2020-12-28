@@ -1,6 +1,8 @@
+from django.apps import apps
+from django.http import HttpResponseRedirect
 from rest_framework import generics
 
-from content.models import Content, Library
+from content.models import Content, Library, Status
 from content.serializers import ContentSerializer, ContentDetailSerializer, LibrarySerializer, LibraryDetailSerializer
 from content.filters import ContentFilters, LibraryFilters
 
@@ -49,4 +51,18 @@ class LibraryDetail( generics.RetrieveAPIView ):
         return qs.get(pk=self.kwargs['pk'])
 
 
-
+class ContentModeration( generics.GenericAPIView ):
+    permission_classes = []
+    def get(self, request, *args, **kwargs):
+        status_flag = {
+            'approved': True,
+            'rejected': False,
+            'pending': False
+        } 
+        model = apps.get_model("content.{}".format(kwargs['model_slug']))
+        obj = model.objects.get(id=kwargs['id'])
+        obj.active = status_flag[kwargs['status_slug']]
+        obj.status = Status.objects.get(slug=kwargs['status_slug'])
+        obj.save()
+        url = self.request.headers.get('Referer')
+        return HttpResponseRedirect(url)

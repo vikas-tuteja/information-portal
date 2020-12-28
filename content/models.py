@@ -18,9 +18,11 @@ class Image(models.Model):
 
     class Meta:
         db_table = "images"
+        verbose_name_plural = "Images for inner content"
 
 class Status(models.Model):
     name = models.CharField(max_length=20, unique=True)
+    slug = models.CharField(max_length=20, unique=True)
 
     def __str__(self):
         return self.name
@@ -39,6 +41,7 @@ class Content(models.Model):
     summary = models.TextField(blank=True, null=True,
         help_text='If left blank, first 200 characters \
             from content will be displayed as summary.')
+    summary_image = models.ImageField(upload_to=IMAGE_PATH, blank=True, null=True)
     sub_category = models.ManyToManyField(SubCategory, blank=True)
     author = models.ForeignKey(User,
         on_delete=models.CASCADE, blank=True, null=True)
@@ -73,6 +76,7 @@ class Library(models.Model):
     audio_file = models.FileField(
         help_text=("Allowed type - .mp3, .wav, .ogg"))
     summary = models.TextField(blank=True, null=True)
+    summary_image = models.ImageField(upload_to=IMAGE_PATH, blank=True, null=True)
     sub_category = models.ManyToManyField(SubCategory, blank=True)
     author = models.ForeignKey(User,
         on_delete=models.CASCADE, blank=True, null=True)
