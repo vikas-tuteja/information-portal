@@ -34,12 +34,12 @@ class Status(models.Model):
 class Content(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    event_date = models.DateTimeField(blank=True, null=True)
     name = models.CharField(max_length=200, unique=True)
     slug = models.SlugField(max_length=200, unique=True)
     title = models.CharField(max_length=200, unique=True)
     content = RichTextField()
-    summary = models.TextField(blank=True, null=True,
-        help_text='If left blank, first 200 characters \
+    summary = models.TextField(help_text='If left blank, first 200 characters \
             from content will be displayed as summary.')
     summary_image = models.ImageField(upload_to=IMAGE_PATH, blank=True, null=True)
     sub_category = models.ManyToManyField(SubCategory, blank=True)
@@ -72,14 +72,15 @@ class Library(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     name = models.CharField(max_length=200, unique=True)
     slug = models.SlugField(max_length=200, unique=True)
-    title = models.CharField(max_length=200, unique=True)
-    audio_file = models.FileField(
+    title = models.CharField(max_length=200, unique=True, help_text='Display name')
+    audio_file = models.FileField(upload_to=AUDIO_PATH,
         help_text=("Allowed type - .mp3, .wav, .ogg"))
-    summary = models.TextField(blank=True, null=True)
+    size = models.FloatField(help_text='MB')
+    filetype = models.CharField(max_length=10, help_text='file extension')
+    summary = models.TextField()
     summary_image = models.ImageField(upload_to=IMAGE_PATH, blank=True, null=True)
     sub_category = models.ManyToManyField(SubCategory, blank=True)
-    author = models.ForeignKey(User,
-        on_delete=models.CASCADE, blank=True, null=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
     views = models.IntegerField(default=0)
 
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
@@ -92,6 +93,8 @@ class Library(models.Model):
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.name)
+        self.size = round(self.audio_file.size/(1024*1024),2)
+        self.filetype = self.audio_file.name.split('.')[-1]
         if not self.pk:
             self.status = Status.objects.get(name='Pending')
 

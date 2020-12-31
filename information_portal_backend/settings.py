@@ -25,8 +25,14 @@ SECRET_KEY = 'pv$deifb@jj$40g2&&qe-3tyyo83@6%c=x0!xz5a38ju+(06l$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = [
+    'localhost:8000',
+    'http://127.0.0.1:8000',
+    'http://ec2-54-83-171-219.compute-1.amazonaws.com',
+    'https://ec2-54-83-171-219.compute-1.amazonaws.com'
+]
+FRONTEND_URL = "http://localhost:4200"
+BACKEND_URL = "http://localhost:8000"
 
 # Application definition
 
@@ -40,6 +46,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     #'django_filters',
+    'corsheaders',
     'drf_yasg',
     'ckeditor',
     'content',
@@ -49,6 +56,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -135,3 +143,29 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 12,
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.BasicAuthentication',
+        'utils.authentication.BearerAuthentication',
+    ),
+   'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.AllowAny',
+    ),
+   'DEFAULT_FILTER_BACKENDS': (
+        'django_filters.rest_framework.DjangoFilterBackend',
+   ),
+}
+
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:8000',
+    'http://127.0.0.1:8000',
+    #'http://ec2-13-58-1-151.us-east-2.compute.amazonaws.com'
+)
+CORS_ORIGIN_ALLOW_ALL = True
+
+CORS_ALLOW_CREDENTIALS = True

@@ -5,7 +5,7 @@ from homepage.models import Configure
 
 # Register your models here.
 class ConfigureAdmin(admin.ModelAdmin):
-    filter_horizontal = ('category', 'content', 'library')
+    filter_horizontal = ('articles', 'blogs', 'news', 'library')
 
     def has_add_permission(self, request):
         # allow only 1 row to be added

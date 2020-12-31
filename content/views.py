@@ -26,7 +26,7 @@ class ContentDetail( generics.RetrieveAPIView ):
 
     def get_object(self):
         qs = self.filter_queryset(self.get_queryset())
-        return qs.get(pk=self.kwargs['pk'])
+        return qs.get(slug=self.kwargs['content_slug'])
 
 
 class LibraryListing( generics.ListAPIView ):
