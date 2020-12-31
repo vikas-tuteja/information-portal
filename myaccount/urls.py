@@ -8,6 +8,6 @@ urlpatterns = [
     url(r'^changepassword/$', ChangePassword.as_view()),
     url(r'^forgotpassword/$', ForgotPassword.as_view()),
     url(r'^logout/$', Logout.as_view()),
-    url(r'^profile/update$', UserDetailUpdate.as_view()),
+    url(r'^profile/update/$', UserDetailUpdate.as_view()),
     url(r'^profile/$', UserDetailListing.as_view()),
 ]

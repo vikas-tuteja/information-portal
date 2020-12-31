@@ -16,6 +16,18 @@ class ContentListing( generics.ListAPIView ):
     filterset_class = ContentFilters
     queryset = Content.objects.filter(active=True).order_by('id')
 
+    def get(self, request, *args, **kwargs):
+        data = super(ContentListing, self).get(request, *args, **kwargs)
+        unique_slug_set = set()
+        unique_data = list()
+        for each in data.data['results']:
+            if each['slug'] not in unique_slug_set:
+                unique_data.append(each)
+            unique_slug_set.add(each['slug'])
+
+        data.data['results'] = unique_data
+        return data 
+
 
 class ContentDetail( generics.RetrieveAPIView ):
     permission_classes = []

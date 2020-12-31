@@ -5,24 +5,22 @@ from content.models import Content, Library
 
 
 class ContentFilters(filters.FilterSet):
-    name = django_filters.CharFilter(method='by_category_name')
+    category = django_filters.CharFilter(method='by_category_name')
 
     class Meta:
         model = Content
-        fields = ['name',]
+        fields = ['category',]
 
     def by_category_name(self, queryset, name, value):
-        qs = queryset.filter(name__icontains=value.lower())
-        return qs
+        return queryset.filter(sub_category__category__slug=value)
 
 
 class LibraryFilters(filters.FilterSet):
-    name = django_filters.CharFilter(method='by_category_name')
+    category = django_filters.CharFilter(method='by_category_name')
 
     class Meta:
         model = Library
-        fields = ['name',]
+        fields = ['category',]
 
     def by_category_name(self, queryset, name, value):
-        qs = queryset.filter(name__icontains=value.lower())
-        return qs
+        return queryset.filter(sub_category__category__slug=value)
