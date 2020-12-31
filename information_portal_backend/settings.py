@@ -28,8 +28,7 @@ DEBUG = True
 ALLOWED_HOSTS = [
     'localhost:8000',
     'http://127.0.0.1:8000',
-    'http://ec2-54-83-171-219.compute-1.amazonaws.com',
-    'https://ec2-54-83-171-219.compute-1.amazonaws.com'
+    'ec2-54-83-171-219.compute-1.amazonaws.com',
 ]
 FRONTEND_URL = "http://localhost:4200"
 BACKEND_URL = "http://localhost:8000"
