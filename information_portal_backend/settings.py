@@ -26,12 +26,10 @@ SECRET_KEY = 'pv$deifb@jj$40g2&&qe-3tyyo83@6%c=x0!xz5a38ju+(06l$'
 DEBUG = True
 
 ALLOWED_HOSTS = [
-    'localhost:8000',
-    'http://127.0.0.1:8000',
     'ec2-54-83-171-219.compute-1.amazonaws.com',
 ]
 FRONTEND_URL = "http://localhost:4200"
-BACKEND_URL = "http://localhost:8000"
+BACKEND_URL = "ec2-54-83-171-219.compute-1.amazonaws.com"
 
 # Application definition
 
@@ -168,3 +166,9 @@ CORS_ORIGIN_WHITELIST = (
 CORS_ORIGIN_ALLOW_ALL = True
 
 CORS_ALLOW_CREDENTIALS = True
+
+try:
+    from local_settings import *
+except ImportError:
+    pass
+
