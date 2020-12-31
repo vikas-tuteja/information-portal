@@ -36,7 +36,7 @@ class Configure(models.Model):
     library_section = models.BooleanField(default=True, help_text='Show/Hide Library Section on Home page')
 
     def __str__(self):
-        return str(self.id)
+        return 'Homepage Dynamic Configuration'
 
     class Meta:
         verbose_name_plural = "Configure"
