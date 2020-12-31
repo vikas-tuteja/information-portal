@@ -74,6 +74,8 @@ class LibraryAdmin(ModerationAdmin):
 
 class StatusAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'slug')
+    def has_add_permission(self, request, obj=None):
+        return False
 
 admin.site.register(Image, ImageAdmin)
 admin.site.register(Content, ContentAdmin)
