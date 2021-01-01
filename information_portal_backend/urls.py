@@ -23,8 +23,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from information_portal_backend.settings import MEDIA_ROOT, MEDIA_URL 
-
+from information_portal_backend.settings import MEDIA_ROOT, MEDIA_URL, STATIC_ROOT, STATIC_URL
 schema_view = get_schema_view(
    openapi.Info(
       title="Information Portal API",
@@ -39,6 +38,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('ckeditor/', include('ckeditor_uploader.urls')),
 
     # APIs
     url(r'^api/', include( 'category.urls' )),
@@ -51,7 +51,8 @@ urlpatterns = [
     # docs
     url(r'^docs/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 
-] + static(MEDIA_URL, document_root=MEDIA_ROOT)
+] + static(MEDIA_URL, document_root=MEDIA_ROOT) + static(STATIC_URL, document_root=STATIC_ROOT)
+
 
 admin.site.site_header = 'Information Portal Admin Panel'
 admin.site.site_title = 'Information Portal'

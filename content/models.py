@@ -2,7 +2,7 @@ from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import User
 
-from ckeditor.fields import RichTextField
+from ckeditor_uploader.fields import RichTextUploadingField
 
 from category.models import SubCategory
 
@@ -38,9 +38,17 @@ class Content(models.Model):
     name = models.CharField(max_length=200, unique=True)
     slug = models.SlugField(max_length=200, unique=True)
     title = models.CharField(max_length=200, unique=True)
-    content = RichTextField()
-    summary = models.TextField(help_text='If left blank, first 200 characters \
-            from content will be displayed as summary.')
+    content = RichTextUploadingField(
+        config_name='special',
+        external_plugin_resources=[(
+                'youtube',
+                '/media/ckeditor_plugins/ckeditor-youtube-plugin-master/youtube/',
+                'plugin.js',
+            )]
+    )
+    summary = models.TextField(
+        help_text='If left blank, first 200 characters \
+        from content will be displayed as summary.')
     summary_image = models.ImageField(upload_to=IMAGE_PATH, blank=True, null=True)
     sub_category = models.ManyToManyField(SubCategory, blank=True)
     author = models.ForeignKey(User,
