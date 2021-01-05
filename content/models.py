@@ -6,9 +6,12 @@ from ckeditor_uploader.fields import RichTextUploadingField
 
 from category.models import SubCategory
 
+from utils.utils import validate_summary_len
+
 
 # Create your models here.
 IMAGE_PATH = 'content/images/'
+MIN_SUMMARY_LEN = 180
 class Image(models.Model):
     name = models.CharField(max_length=200)
     image = models.ImageField(upload_to=IMAGE_PATH)
@@ -47,8 +50,8 @@ class Content(models.Model):
             )]
     )
     summary = models.TextField(
-        help_text='If left blank, first 200 characters \
-        from content will be displayed as summary.')
+        help_text='Please enter a minimum of 180 characters',
+        validators=[validate_summary_len])
     summary_image = models.ImageField(upload_to=IMAGE_PATH, blank=True, null=True)
     sub_category = models.ManyToManyField(SubCategory, blank=True)
     author = models.ForeignKey(User,
@@ -70,6 +73,7 @@ class Content(models.Model):
 
         super(Content, self).save(*args, **kwargs)
 
+
     class Meta:
         db_table = "content"
 
@@ -85,7 +89,9 @@ class Library(models.Model):
         help_text=("Allowed type - .mp3, .wav, .ogg"))
     size = models.FloatField(help_text='MB')
     filetype = models.CharField(max_length=10, help_text='file extension')
-    summary = models.TextField()
+    summary = models.TextField(
+        help_text='Please enter a minimum of 180 characters',
+        validators=[validate_summary_len])
     summary_image = models.ImageField(upload_to=IMAGE_PATH, blank=True, null=True)
     sub_category = models.ManyToManyField(SubCategory, blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)

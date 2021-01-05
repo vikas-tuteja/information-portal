@@ -11,6 +11,8 @@ from rest_framework import permissions
 from myaccount.models import UserDetail
 from myaccount.serializers import UserSerializer, AuthUserSerializer
 
+from utils.utils import getattr_recursive
+
 # Create your views here.
 class SignIn(generics.CreateAPIView):
     """
@@ -28,18 +30,22 @@ class SignIn(generics.CreateAPIView):
         kwargs.update(request.data)
         key = None
         status = False
-        user = authenticate(
-            username = kwargs.get('username', kwargs.get('mobile')),
-            password = kwargs.get('password'))
+        message = 'Something went wrong. Please try again'
+        try:
+            user = authenticate(
+                username = kwargs.get('username', kwargs.get('mobile')),
+                password = kwargs.get('password'))
 
-        if not user:
-            message = 'Error: Invalid credentials'
-            user = type('User', (object,), {
-                "first_name": str(), "last_name": str()})
-        else:
-            key = Token.objects.get(user=user).key
-            status = True
-            message = 'Successfully logged in'
+            if not user:
+                message = 'Error: Invalid credentials'
+                user = type('User', (object,), {
+                    "first_name": str(), "last_name": str()})
+            else:
+                key = getattr_recursive(Token.objects.get(user=user), ['key'])
+                status = True
+                message = 'Successfully logged in'
+        except:
+            pass
 
         return JsonResponse( data={
             'status':status,
@@ -66,69 +72,75 @@ class SignUp(generics.CreateAPIView):
     queryset = UserDetail.objects.all()
 
     def post(self, request, *args, **kwargs):
+        status = False
+        key = None
+        message = 'User with this email or mobile already exists '
+        
         kwargs.update(request.data)
         
-        # check if user already exists
+        first_name = kwargs.get('first_name')
+        last_name = kwargs.get('last_name')
         username = kwargs.get('username', kwargs.get('mobile'))
         email = kwargs.get('email')
         password = kwargs.get('password')
-        first_name = kwargs.get('first_name')
-        last_name = kwargs.get('last_name')
-        exists = UserDetail.objects.filter(
-            Q(auth_user__username=username) | Q(mobile=username))
+        confirm_password = kwargs.get('confirm_password')
 
-        if exists:
-            key = None
-            status = False
-            message = 'User with this email or mobile already exists '
+        # verify passwords
+        if password!=confirm_password:
+            message = 'Confirm password does not match with password'
         else:
-            try:
-                # create auth user first
-                auth_user = User.objects.create(
-                    first_name = first_name,
-                    last_name = last_name,
-                    username = username,
-                    email = email,
-                )
-                auth_user.set_password(kwargs.get('password', kwargs.get('mobile')))
-                auth_user.save()
+            # check if user already exists
+            exists = UserDetail.objects.filter(
+                Q(auth_user__username=username) | Q(mobile=username))
+
+            if not exists:
+                try:
+                    # create auth user first
+                    auth_user = User.objects.create(
+                        first_name = first_name,
+                        last_name = last_name,
+                        username = username,
+                        email = email,
+                    )
+                    auth_user.set_password(kwargs.get('password', kwargs.get('mobile')))
+                    auth_user.save()
+                    
+                    # then create userdetails
+                    user_detail = UserDetail.objects.create(
+                        auth_user = auth_user,
+                        mobile = username,
+                    )
+                    user_detail.save()
+
+                    # then create auth token
+                    token = Token.objects.create(user=auth_user)
                 
-                # then create userdetails
-                user_detail = UserDetail.objects.create(
-                    auth_user = auth_user,
-                    mobile = username,
-                )
-                user_detail.save()
+                    # automatic login after registration
+                    user = authenticate(
+                        username = username,
+                        password = password
+                    )
+                    # this is not required
+                    # auth_login(request, user)
 
-                # then create auth token
-                token = Token.objects.create(user=auth_user)
-            
-                # automatic login after registration
-                user = authenticate(
-                    username = username,
-                    password = password
-                )
-                # this is not required
-                # auth_login(request, user)
+                    key = token.key
+                    status = True
+                    message = 'User created successfully.'
 
-                key = token.key
-                status = True
-                message = 'User created successfully.'
+                    # TODO: welcome email
+                    """email_data = econf.get(user_role)['welcome']
+                    html_content = email_data['html'] % {'username': username, 'password': password}
 
-                # TODO: welcome email
-                """email_data = econf.get(user_role)['welcome']
-                html_content = email_data['html'] % {'username': username, 'password': password}
-
-                emailobj = SendMail()
-                emailobj.set_params(
-                        recipient_list=username, 
-                        subject=email_data['subject'],
-                        text_content=email_data['plain_text'],
-                        html_content=html_content,
-                )
-                emailobj.send_mail()"""
-            except:
-                pass
+                    emailobj = SendMail()
+                    emailobj.set_params(
+                            recipient_list=username, 
+                            subject=email_data['subject'],
+                            text_content=email_data['plain_text'],
+                            html_content=html_content,
+                    )
+                    emailobj.send_mail()"""
+                except:
+                    pass
         return JsonResponse( data={
             'status':status,
             'message':message,

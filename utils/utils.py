@@ -1,3 +1,7 @@
+import contextlib
+from functools import reduce
+from django.core.exceptions import ValidationError
+
 def getattr_recursive(obj: object, attributes: list, default=None):
     final_value = reduce(getattr_safe, [obj] + attributes)
     # Because 0 and False are valid return values
@@ -15,3 +19,13 @@ def getattr_safe(obj, attr):
                 return obj[int(attr)]
         else:
             return getattr(obj, attr)
+
+
+def validate_summary_len(val, min_len=180):
+    print(len(val))
+    if len(val) < min_len:
+        raise ValidationError(
+            'Summary Field length should be minimum {} \
+                characters'.format(min_len))
+
+
