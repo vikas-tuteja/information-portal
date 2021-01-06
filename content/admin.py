@@ -67,14 +67,14 @@ class ContentAdmin(ModerationAdmin):
     search_fields = ('name',)
     list_display = ('title', 'created_at', 'views', 'active', 'status', 'reviewed_by', 'preview')
     filter_horizontal = ('sub_category',)
-    readonly_fields = ('slug', 'views', 'status', 'active')
+    readonly_fields = ('slug', 'views', 'status', 'active', 'approved_rejected_by')
 
 
 class LibraryAdmin(ModerationAdmin):
     search_fields = ('name',)
     filter_horizontal = ('sub_category',)
     list_display = ('title', 'size', 'filetype', 'created_at', 'views', 'active', 'status', 'reviewed_by', 'preview')
-    readonly_fields = ('slug', 'views', 'status', 'active', 'size', 'filetype')
+    readonly_fields = ('slug', 'views', 'status', 'active', 'size', 'filetype', 'approved_rejected_by')
 
 
 class StatusAdmin(admin.ModelAdmin):
