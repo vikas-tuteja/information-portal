@@ -11,7 +11,6 @@ from utils.utils import validate_summary_len
 
 # Create your models here.
 IMAGE_PATH = 'content/images/'
-MIN_SUMMARY_LEN = 180
 class Image(models.Model):
     name = models.CharField(max_length=200)
     image = models.ImageField(upload_to=IMAGE_PATH)
@@ -51,8 +50,12 @@ class Content(models.Model):
     )
     summary = models.TextField(
         help_text='Please enter a minimum of 180 characters',
-        validators=[validate_summary_len])
+        #validators=[validate_summary_len],
+        blank=True, null=True
+    )
+    show_summary = models.BooleanField(default=True)
     summary_image = models.ImageField(upload_to=IMAGE_PATH, blank=True, null=True)
+    watermark_image = models.ImageField(upload_to=IMAGE_PATH, blank=True, null=True)
     sub_category = models.ManyToManyField(SubCategory, blank=True)
     author = models.ForeignKey(User,
         on_delete=models.CASCADE, blank=True, null=True)
@@ -60,6 +63,10 @@ class Content(models.Model):
 
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
     active = models.BooleanField(default=False)
+    approved_rejected_by = models.ForeignKey(User,
+        on_delete=models.CASCADE,
+        related_name='approved_rejected_by',
+        blank=True, null=True)
     active_from = models.DateTimeField(blank=True, null=True)
     active_till = models.DateTimeField(blank=True, null=True)
 
@@ -91,14 +98,22 @@ class Library(models.Model):
     filetype = models.CharField(max_length=10, help_text='file extension')
     summary = models.TextField(
         help_text='Please enter a minimum of 180 characters',
-        validators=[validate_summary_len])
+        #validators=[validate_summary_len],
+        blank=True, null=True
+    )
+    show_summary = models.BooleanField(default=True)
     summary_image = models.ImageField(upload_to=IMAGE_PATH, blank=True, null=True)
+    watermark_image = models.ImageField(upload_to=IMAGE_PATH, blank=True, null=True)
     sub_category = models.ManyToManyField(SubCategory, blank=True)
     author = models.ForeignKey(User, on_delete=models.CASCADE)
     views = models.IntegerField(default=0)
 
     status = models.ForeignKey(Status, on_delete=models.CASCADE)
     active = models.BooleanField(default=False)
+    approved_rejected_by = models.ForeignKey(User,
+        on_delete=models.CASCADE,
+        related_name='Content_approved_rejected_by',
+        blank=True, null=True)
     active_from = models.DateTimeField(blank=True, null=True)
     active_till = models.DateTimeField(blank=True, null=True)
 

@@ -61,20 +61,3 @@ class LibraryDetail( generics.RetrieveAPIView ):
     def get_object(self):
         qs = self.filter_queryset(self.get_queryset())
         return qs.get(pk=self.kwargs['pk'])
-
-
-class ContentModeration( generics.GenericAPIView ):
-    permission_classes = []
-    def get(self, request, *args, **kwargs):
-        status_flag = {
-            'approved': True,
-            'rejected': False,
-            'pending': False
-        } 
-        model = apps.get_model("content.{}".format(kwargs['model_slug']))
-        obj = model.objects.get(id=kwargs['id'])
-        obj.active = status_flag[kwargs['status_slug']]
-        obj.status = Status.objects.get(slug=kwargs['status_slug'])
-        obj.save()
-        url = self.request.headers.get('Referer')
-        return HttpResponseRedirect(url)

@@ -22,7 +22,6 @@ def getattr_safe(obj, attr):
 
 
 def validate_summary_len(val, min_len=180):
-    print(len(val))
     if len(val) < min_len:
         raise ValidationError(
             'Summary Field length should be minimum {} \

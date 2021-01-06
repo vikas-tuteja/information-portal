@@ -6,6 +6,7 @@ from django.utils.html import format_html
 from information_portal_backend.settings import FRONTEND_URL, BACKEND_URL
 
 from content.models import Status, Image, Content, Library
+from utils.utils import getattr_recursive 
 
 # Register your models here.
 class ImageAdmin(admin.ModelAdmin):
@@ -16,7 +17,24 @@ class ImageAdmin(admin.ModelAdmin):
         return '{}{}'.format(BACKEND_URL, obj.image.url)
 
 
+def approve(modeladmin, request, queryset):
+    queryset.update(
+        approved_rejected_by=request.user,
+        active=True,
+        status=Status.objects.get(slug='approved')
+    )
+
+def reject(modeladmin, request, queryset):
+    queryset.update(
+        approved_rejected_by=request.user,
+        active=False,
+        status=Status.objects.get(slug='rejected')
+    )
+
+
 class ModerationAdmin(admin.ModelAdmin):
+    actions = [approve, reject]
+
     def review_status(self, obj):
         if obj.status.name.lower() == 'approved':
             return format_html('<span style="color: green">Approved</span>')
@@ -25,17 +43,13 @@ class ModerationAdmin(admin.ModelAdmin):
         else:
             return obj.status.name
 
-    @staticmethod
-    def approve(self):
-        return format_html(
-            '<a class="button" style="background-color: green;" \
-            href="/api/content/{}/{}/approved">Approve</a>'.format(self.__class__.__name__, self.id))
-
-    @staticmethod
-    def reject(self):
-        return format_html(
-            '<a class="button" style="background-color:red;" \
-            href="/api/content/{}/{}/rejected">Reject</a>'.format(self.__class__.__name__, self.id))
+    def reviewed_by(self, obj):
+        name = [getattr_recursive(obj.approved_rejected_by, ['first_name']), 
+            getattr_recursive(obj.approved_rejected_by, ['last_name'])]
+        if all(name):
+            return ' '.join(name)
+        else:
+            return getattr_recursive(obj, ['approved_rejected_by', 'email'])
 
     @staticmethod
     def preview(self):
@@ -48,19 +62,10 @@ class ModerationAdmin(admin.ModelAdmin):
                 href="{}/{}/{}/?preview=1">Preview</a>'.format(
                 FRONTEND_URL, url_map[self.__class__.__name__.lower()], self.slug))
 
-    def get_list_display(self, request):
-        x = copy.deepcopy(list(self.list_display))
-        groups = [x.name for x in request.user.groups.all()]
-        with contextlib.suppress(ValueError):
-            if 'admin' not in groups:
-                x.remove('approve')
-                x.remove('reject')
-        return x
-
 
 class ContentAdmin(ModerationAdmin):
     search_fields = ('name',)
-    list_display = ('title', 'created_at', 'views', 'active', 'status', 'approve', 'reject', 'preview')
+    list_display = ('title', 'created_at', 'views', 'active', 'status', 'reviewed_by', 'preview')
     filter_horizontal = ('sub_category',)
     readonly_fields = ('slug', 'views', 'status', 'active')
 
@@ -68,14 +73,17 @@ class ContentAdmin(ModerationAdmin):
 class LibraryAdmin(ModerationAdmin):
     search_fields = ('name',)
     filter_horizontal = ('sub_category',)
-    list_display = ('title', 'size', 'filetype', 'created_at', 'views', 'active', 'status', 'approve', 'reject', 'preview')
+    list_display = ('title', 'size', 'filetype', 'created_at', 'views', 'active', 'status', 'reviewed_by', 'preview')
     readonly_fields = ('slug', 'views', 'status', 'active', 'size', 'filetype')
 
 
 class StatusAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'slug')
+    readonly_fields = ('slug',)
+
     def has_add_permission(self, request, obj=None):
         return False
+
 
 admin.site.register(Image, ImageAdmin)
 admin.site.register(Content, ContentAdmin)
