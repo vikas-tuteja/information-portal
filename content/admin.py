@@ -49,7 +49,7 @@ class ModerationAdmin(admin.ModelAdmin):
         if all(name):
             return ' '.join(name)
         else:
-            return obj.approved_rejected_by.username)
+            return obj.approved_rejected_by.username
 
     @staticmethod
     def preview(self):
