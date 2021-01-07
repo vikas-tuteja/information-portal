@@ -1,5 +1,6 @@
+import json
 from django.apps import apps
-from django.http import HttpResponseRedirect
+from django.http import HttpResponse
 from rest_framework import generics
 
 from content.models import Content, Library, Status
@@ -30,6 +31,9 @@ class ContentListing( generics.ListAPIView ):
 
 
 class ContentDetail( generics.RetrieveAPIView ):
+    """
+    API endpoint that gives a Content detail
+    """
     permission_classes = []
     serializer_class = ContentDetailSerializer
 
@@ -52,6 +56,9 @@ class LibraryListing( generics.ListAPIView ):
 
 
 class LibraryDetail( generics.RetrieveAPIView ):
+    """
+    API endpoint that gives an Audio Library detail
+    """
     permission_classes = []
     serializer_class = LibraryDetailSerializer
 
@@ -60,4 +67,59 @@ class LibraryDetail( generics.RetrieveAPIView ):
 
     def get_object(self):
         qs = self.filter_queryset(self.get_queryset())
-        return qs.get(pk=self.kwargs['pk'])
+        return qs.get(slug=self.kwargs['library_slug'])
+
+
+class ContentSearch( generics.GenericAPIView ):
+    """
+    API endpoint that searches for content/Audio Library
+    """
+    permission_classes = []
+    SEARCH_RESULT_LEN = 10
+    url_subcategory_map = {
+        'content': {
+            'fake-news': '/latest-news/{}', 
+            'real-news': '/latest-news/{}',
+            'blogs': '/blogs/{}',
+            'articles': '/articles/{}',
+            None: '/latest-news/{}'
+        },
+        'library' : '/audio-books/{}', 
+    }
+
+    def get(self, request, *args, **kwargs):
+        search_string = self.request.query_params['search_string']
+        results = []
+        librarys = []
+        contents = Content.objects.filter(
+            active=True,
+            title__icontains=search_string).values(
+            'name', 'sub_category__name', 'sub_category__slug', 'slug'
+            )[:self.SEARCH_RESULT_LEN]
+
+        if len(contents) < self.SEARCH_RESULT_LEN:
+            remaining_contents = self.SEARCH_RESULT_LEN - len(contents)
+            librarys = Library.objects.filter(
+                active=True,
+                title__icontains=search_string).values(
+                'name', 'slug'
+                )[:remaining_contents]
+
+        for each in contents:
+            each.update({
+                'href': self.url_subcategory_map['content'][each['sub_category__slug']].format(each['slug'])
+            })
+            results.append(each)
+
+        for each in librarys:
+            each.update({
+                'href': self.url_subcategory_map['library'].format(each['slug']),
+                'sub_category__name': 'Audio Books'
+            })
+            results.append(each)
+
+
+        return HttpResponse(json.dumps({
+            'results': results,
+            'count': len(results)
+        }), content_type='application/json')

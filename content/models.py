@@ -94,6 +94,8 @@ class Library(models.Model):
     title = models.CharField(max_length=200, unique=True, help_text='Display name')
     audio_file = models.FileField(upload_to=AUDIO_PATH,
         help_text=("Allowed type - .mp3, .wav, .ogg"))
+    album_name = models.CharField(max_length=100)
+    singer_name =models.CharField(max_length=100)
     size = models.FloatField(help_text='MB')
     filetype = models.CharField(max_length=10, help_text='file extension')
     summary = models.TextField(
