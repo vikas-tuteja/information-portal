@@ -5,6 +5,7 @@ from content.models import Content, Library
 class ContentLibraryBase(serializers.ModelSerializer):
     author = serializers.SerializerMethodField()
     summary = serializers.SerializerMethodField()
+    is_fake = serializers.SerializerMethodField()
 
     def get_author(self, obj):
         return '{} {}'.format(obj.author.first_name, obj.author.last_name)
@@ -14,19 +15,18 @@ class ContentLibraryBase(serializers.ModelSerializer):
             return obj.summary
         return ''
 
-class ContentSerializer(ContentLibraryBase):
+    def get_is_fake(self, obj):
+        return 'fake-news' in [
+            x.slug for x in obj.sub_category.all()]
 
+
+class ContentSerializer(ContentLibraryBase):
     class Meta:
         model = Content
         fields = '__all__'
 
 
-class ContentDetailSerializer(serializers.ModelSerializer):
-    author = serializers.SerializerMethodField()
-
-    def get_author(self, obj):
-        return '{} {}'.format(obj.author.first_name, obj.author.last_name)
-
+class ContentDetailSerializer(ContentLibraryBase):
     class Meta:
         model = Content
         fields = '__all__'

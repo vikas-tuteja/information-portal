@@ -94,7 +94,7 @@ class ContentSearch( generics.GenericAPIView ):
         contents = Content.objects.filter(
             active=True,
             title__icontains=search_string).values(
-            'name', 'sub_category__name', 'sub_category__slug', 'slug'
+            'title', 'sub_category__name', 'sub_category__slug', 'slug'
             )[:self.SEARCH_RESULT_LEN]
 
         if len(contents) < self.SEARCH_RESULT_LEN:
@@ -102,7 +102,7 @@ class ContentSearch( generics.GenericAPIView ):
             librarys = Library.objects.filter(
                 active=True,
                 title__icontains=search_string).values(
-                'name', 'slug'
+                'title', 'slug'
                 )[:remaining_contents]
 
         for each in contents:
