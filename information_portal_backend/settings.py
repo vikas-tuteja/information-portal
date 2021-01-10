@@ -25,11 +25,11 @@ SECRET_KEY = 'pv$deifb@jj$40g2&&qe-3tyyo83@6%c=x0!xz5a38ju+(06l$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = [
-    'ec2-54-83-171-219.compute-1.amazonaws.com',
-]
 FRONTEND_URL = "http://localhost:4200"
 BACKEND_URL = "ec2-18-204-231-217.compute-1.amazonaws.com"
+ALLOWED_HOSTS = [
+   BACKEND_URL 
+]
 
 # Application definition
 
