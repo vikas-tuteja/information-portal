@@ -29,7 +29,7 @@ ALLOWED_HOSTS = [
     'ec2-54-83-171-219.compute-1.amazonaws.com',
 ]
 FRONTEND_URL = "http://localhost:4200"
-BACKEND_URL = "ec2-54-83-171-219.compute-1.amazonaws.com"
+BACKEND_URL = "ec2-18-204-231-217.compute-1.amazonaws.com"
 
 # Application definition
 
@@ -217,7 +217,7 @@ REST_FRAMEWORK = {
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:8000',
     'http://127.0.0.1:8000',
-    #'http://ec2-13-58-1-151.us-east-2.compute.amazonaws.com'
+    "ec2-18-204-231-217.compute-1.amazonaws.com"
 )
 CORS_ORIGIN_ALLOW_ALL = True
 
