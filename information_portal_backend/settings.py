@@ -217,7 +217,7 @@ REST_FRAMEWORK = {
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:8000',
     'http://127.0.0.1:8000',
-    "ec2-18-204-231-217.compute-1.amazonaws.com"
+    "https://ec2-18-204-231-217.compute-1.amazonaws.com"
 )
 CORS_ORIGIN_ALLOW_ALL = True
 
