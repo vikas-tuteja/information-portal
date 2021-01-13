@@ -1,3 +1,4 @@
+import mutagen
 from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import User
@@ -6,7 +7,7 @@ from ckeditor_uploader.fields import RichTextUploadingField
 
 from category.models import SubCategory
 
-from utils.utils import validate_summary_len
+from utils.utils import validate_summary_len, getattr_recursive, convert
 
 
 # Create your models here.
@@ -98,6 +99,7 @@ class Library(models.Model):
     singer_name =models.CharField(max_length=100)
     size = models.FloatField(help_text='MB')
     filetype = models.CharField(max_length=10, help_text='file extension')
+    duration = models.CharField(max_length=20, default=0)
     summary = models.TextField(
         help_text='Please enter a minimum of 180 characters',
         #validators=[validate_summary_len],
@@ -123,12 +125,13 @@ class Library(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
-        self.size = round(self.audio_file.size/(1024*1024),2)
-        self.filetype = self.audio_file.name.split('.')[-1]
         if not self.pk:
             self.status = Status.objects.get(name='Pending')
 
+        self.slug = slugify(self.name)
+        self.size = round(self.audio_file.size/(1024*1024),2)
+        self.filetype = self.audio_file.name.split('.')[-1]
+        self.duration = convert(int(getattr_recursive(mutagen.File(self.audio_file), ['info', 'length'])))
         super(Library, self).save(*args, **kwargs)
 
     class Meta:

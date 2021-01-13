@@ -27,4 +27,11 @@ def validate_summary_len(val, min_len=180):
             'Summary Field length should be minimum {} \
                 characters'.format(min_len))
 
+def convert(seconds):
+    seconds = seconds % (24 * 3600)
+    hour = seconds // 3600
+    seconds %= 3600
+    minutes = seconds // 60
+    seconds %= 60
 
+    return "%d:%02d:%02d" % (hour, minutes, seconds)
