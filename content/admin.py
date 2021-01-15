@@ -59,7 +59,7 @@ class ModerationAdmin(admin.ModelAdmin):
         }
         return format_html(
             '<a target="_blank" class="button" style="background-color:cadetblue;" \
-                href="{}/{}/{}/?preview=1">Preview</a>'.format(
+                href="{}/{}/{}/?preview=true">Preview</a>'.format(
                 FRONTEND_URL, url_map[self.__class__.__name__.lower()], self.slug))
 
 

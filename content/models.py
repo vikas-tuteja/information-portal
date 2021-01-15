@@ -2,12 +2,13 @@ import mutagen
 from django.db import models
 from django.utils.text import slugify
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 from ckeditor_uploader.fields import RichTextUploadingField
 
 from category.models import SubCategory
 
-from utils.utils import validate_summary_len, getattr_recursive, convert
+from utils.utils import validate_summary_len, validate_is_english, getattr_recursive, convert
 
 
 # Create your models here.
@@ -38,7 +39,9 @@ class Content(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     event_date = models.DateTimeField(blank=True, null=True)
-    name = models.CharField(max_length=200, unique=True)
+    name = models.CharField(max_length=200, unique=True,
+        validators=[validate_is_english],
+        help_text='Write the name only in English Language')
     slug = models.SlugField(max_length=200, unique=True)
     title = models.CharField(max_length=200, unique=True)
     content = RichTextUploadingField(
@@ -90,7 +93,9 @@ AUDIO_PATH = 'content/library'
 class Library(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    name = models.CharField(max_length=200, unique=True)
+    name = models.CharField(max_length=200, unique=True,
+        validators=[validate_is_english],
+        help_text='Write the name only in English Language')
     slug = models.SlugField(max_length=200, unique=True)
     title = models.CharField(max_length=200, unique=True, help_text='Display name')
     audio_file = models.FileField(upload_to=AUDIO_PATH,
@@ -102,7 +107,6 @@ class Library(models.Model):
     duration = models.CharField(max_length=20, default=0)
     summary = models.TextField(
         help_text='Please enter a minimum of 180 characters',
-        #validators=[validate_summary_len],
         blank=True, null=True
     )
     show_summary = models.BooleanField(default=True)

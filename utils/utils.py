@@ -27,6 +27,13 @@ def validate_summary_len(val, min_len=180):
             'Summary Field length should be minimum {} \
                 characters'.format(min_len))
 
+def  validate_is_english(val):
+    """ returns true if val is in english """
+    if not val.replace(' ', '').isalpha():
+        raise ValidationError('Name should be in English language only.')
+    else:
+        return True
+
 def convert(seconds):
     seconds = seconds % (24 * 3600)
     hour = seconds // 3600

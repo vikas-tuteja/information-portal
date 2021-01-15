@@ -42,7 +42,15 @@ class ContentDetail( generics.RetrieveAPIView ):
 
     def get_object(self):
         qs = self.filter_queryset(self.get_queryset())
-        return qs.get(slug=self.kwargs['content_slug'])
+        is_preview = bool(self.request.query_params.get('preview'))
+        filters = {
+            'slug': self.kwargs['content_slug'],
+        }
+        if not is_preview:
+            filters.update({
+                'active': True
+            })
+        return qs.get(**filters)
 
 
 class LibraryListing( generics.ListAPIView ):
