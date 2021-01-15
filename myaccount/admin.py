@@ -6,4 +6,5 @@ from myaccount.models import UserDetail
 class UserDetailAdmin(admin.ModelAdmin):
     def has_add_permission(self, request, obj=None):
         return False
+
 admin.site.register(UserDetail, UserDetailAdmin)

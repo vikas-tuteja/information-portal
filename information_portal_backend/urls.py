@@ -44,6 +44,7 @@ urlpatterns = [
     url(r'^api/', include( 'category.urls' )),
     url(r'^api/', include( 'content.urls' )),
     url(r'^api/', include( 'homepage.urls' )),
+    url(r'^api/', include( 'staticpagesconfig.urls' )),
 
     # My Account APIs
     url(r'^myaccount/', include( 'myaccount.urls' )),

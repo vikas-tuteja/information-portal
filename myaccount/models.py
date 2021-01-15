@@ -11,4 +11,4 @@ class UserDetail(models.Model):
         return self.auth_user.username
 
     class Meta:
-        verbose_name_plural = "Actual User Account"
+        verbose_name_plural = "End Users"
