@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from information_portal_backend.settings import BACKEND_URL
+from information_portal_backend.settings import BACKEND_URL, BACKEND_URL_PORT
 from content.models import Content, Library
 
 class ContentLibraryBase(serializers.ModelSerializer):
@@ -35,8 +35,8 @@ class ContentDetailSerializer(ContentLibraryBase):
         fields = '__all__'
 
     def get_content(self, obj):
-        return obj.content.replace('src="/media/', 'src="{}/media/'.format(
-            BACKEND_URL
+        return obj.content.replace('src="/media/', 'src="{}:{}/media/'.format(
+            BACKEND_URL, BACKEND_URL_PORT
         ))
 
 class LibrarySerializer(ContentLibraryBase):

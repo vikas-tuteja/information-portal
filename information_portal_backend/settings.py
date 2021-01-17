@@ -31,6 +31,8 @@ ALLOWED_HOSTS = [
    BACKEND_URL 
 ]
 
+BACKEND_URL_PORT: '8080'
+
 # Application definition
 
 INSTALLED_APPS = [
