@@ -3,7 +3,7 @@ import contextlib
 
 from django.contrib import admin
 from django.utils.html import format_html
-from information_portal_backend.settings import FRONTEND_URL, BACKEND_URL, BACKEND_URL_PORT
+from information_portal_backend.settings import FRONTEND_URL, BACKEND_URL, BACKEND_URL_PORT, BACKEND_URL_PROTOCOL
 
 from content.models import Status, Image, Content, Library
 from utils.utils import getattr_recursive 
@@ -14,7 +14,8 @@ class ImageAdmin(admin.ModelAdmin):
     list_display = ('name', 'image_url')
 
     def image_url(self, obj):
-        return '{}:{}{}'.format(BACKEND_URL, BACKEND_URL_PORT, obj.image.url)
+        return '{}{}:{}{}'.format(BACKEND_URL_PROTOCOL,
+            BACKEND_URL, BACKEND_URL_PORT, obj.image.url)
 
 
 def approve(modeladmin, request, queryset):
