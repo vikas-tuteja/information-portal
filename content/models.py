@@ -58,7 +58,7 @@ class Content(models.Model):
         blank=True, null=True
     )
     show_summary = models.BooleanField(default=True)
-    summary_image = models.ImageField(upload_to=IMAGE_PATH, blank=True, null=True)
+    summary_image = models.ImageField(upload_to=IMAGE_PATH)
     watermark_image = models.ImageField(upload_to=IMAGE_PATH, blank=True, null=True)
     sub_category = models.ManyToManyField(SubCategory, blank=True)
     author = models.ForeignKey(User,
