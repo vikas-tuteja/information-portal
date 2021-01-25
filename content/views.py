@@ -86,11 +86,11 @@ class ContentSearch( generics.GenericAPIView ):
     SEARCH_RESULT_LEN = 10
     url_subcategory_map = {
         'content': {
-            'fake-news': '/latest-news/{}', 
-            'real-news': '/latest-news/{}',
+            'fake-news': '/news/{}', 
+            'real-news': '/news/{}',
             'blogs': '/blogs/{}',
             'articles': '/articles/{}',
-            None: '/latest-news/{}'
+            None: '/news/{}'
         },
         'library' : '/audio-books/{}', 
     }

@@ -55,7 +55,7 @@ class ModerationAdmin(admin.ModelAdmin):
     @staticmethod
     def preview(self):
         url_map = {
-            'content': 'latest-news',
+            'content': 'news',
             'library': 'audio-library'
         }
         return format_html(
