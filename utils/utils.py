@@ -29,7 +29,7 @@ def validate_summary_len(val, min_len=180):
 
 def  validate_is_english(val):
     """ returns true if val is in english """
-    if not val.replace(' ', '').isalpha():
+    if not val.replace(' ', '').isalnum():
         raise ValidationError('Name should be in English language only.')
     else:
         return True
