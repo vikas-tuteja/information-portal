@@ -49,6 +49,9 @@ urlpatterns = [
     # My Account APIs
     url(r'^myaccount/', include( 'myaccount.urls' )),
 
+    # Reactions
+    url(r'^api/', include( 'reaction.urls' )),
+
     # docs
     url(r'^docs/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 

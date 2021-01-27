@@ -54,7 +54,8 @@ INSTALLED_APPS = [
     'category',
     'homepage',
     'myaccount',
-    'staticpagesconfig'
+    'staticpagesconfig',
+    'reaction'
 ]
 CKEDITOR_UPLOAD_PATH = 'content/images/'
 

@@ -94,6 +94,7 @@ class ContentSearch( generics.GenericAPIView ):
         },
         'library' : '/audio-books/{}', 
     }
+    serializer_class = ContentSerializer
 
     def get(self, request, *args, **kwargs):
         search_string = self.request.query_params['search_string']

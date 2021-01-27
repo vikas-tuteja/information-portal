@@ -25,10 +25,10 @@ class UserSerializer( serializers.ModelSerializer ):
     #def get_image(self, obj):
     #    return getattr_recursive(obj, ['image', 'url'])
 
-class UserReviewSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(read_only=True, source='auth_user.first_name')
-    mobile = serializers.CharField(read_only=True, source='auth_user.username')
+class UserNameSerializer(serializers.ModelSerializer):
+    fname = serializers.CharField(read_only=True, source='auth_user.first_name')
+    lname = serializers.CharField(read_only=True, source='auth_user.last_name')
 
     class Meta:
         model = UserDetail
-        fields = ('id', 'name', 'mobile')
+        fields = ('fname', 'lname')
