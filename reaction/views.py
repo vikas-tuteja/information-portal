@@ -7,10 +7,13 @@ from reaction.models import Reaction
 from myaccount.models import UserDetail
 
 from reaction.serializers import CommentListSerializers, ReactionCreateSerializer, ReactionEditSerializer
+from utils.pagination import StandardResultsSetPagination
+
 # Create your views here.
 class CommentListByPost( generics.ListAPIView ):
     permission_classes = []
     serializer_class = CommentListSerializers
+    pagination_class = StandardResultsSetPagination
 
     def get_queryset(self, *args, **kwargs):
         content_type = self.kwargs['post_type']
