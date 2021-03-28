@@ -40,7 +40,9 @@ class SignIn(generics.CreateAPIView):
                 message = 'Error: Invalid credentials'
                 user = type('User', (object,), {
                     "first_name": str(), "last_name": str()})
+                user_id = None
             else:
+                user_id = UserDetail.objects.get(auth_user=user).id
                 key = getattr_recursive(Token.objects.get(user=user), ['key'])
                 status = True
                 message = 'Successfully logged in'
@@ -51,7 +53,8 @@ class SignIn(generics.CreateAPIView):
             'status':status,
             'message':message,
             'token': key,
-            'name': '{} {}'.format(user.first_name, user.last_name)
+            'name': '{} {}'.format(user.first_name, user.last_name),
+            'id': user_id
         })
 
 

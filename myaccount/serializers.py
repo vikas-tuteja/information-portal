@@ -31,4 +31,4 @@ class UserNameSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = UserDetail
-        fields = ('fname', 'lname')
+        fields = ('id', 'fname', 'lname')
